@@ -1,27 +1,29 @@
 import { Plugin } from "esbuild";
-import { capitalCase } from "capital-case";
 
 interface IOptions {
   depsToExtract: Array<{
     dep: string;
     content?: string;
-    // TODO:
-    // contentFunc?: (dep: string) => string;
+    contentFunc?: (dep: string) => string;
   }>;
 }
 
 export const PreserveExternalPlugin = (options: IOptions): Plugin => {
   const NAMESPACE = "preserved-external-deps";
+  const depList = options.depsToExtract.map((pair) =>
+    pair.contentFunc
+      ? { dep: pair.dep, content: pair.contentFunc(pair.dep) }
+      : pair
+  );
 
   const filterRE = new RegExp(
-    `^(${options.depsToExtract
-      .map((str) => str.dep.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    `^(${depList
+      .map((config) => config.dep.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
       .join("|")})$`
   );
-  console.log("filterRE: ", filterRE);
 
   return {
-    name: "PreserveExternal",
+    name: "PreserveExternalPlugin",
     setup(build) {
       build.onResolve({ filter: filterRE }, ({ path }) => {
         return {
@@ -30,29 +32,16 @@ export const PreserveExternalPlugin = (options: IOptions): Plugin => {
         };
       });
 
-      // for (const { dep, content } of options.depsToExtract) {
-      //   build.onLoad(
-      //     { filter: new RegExp(`^${dep}$`), namespace: NAMESPACE },
-      //     () => {
-      //       return {
-      //         contents: content,
-      //       };
-      //     }
-      //   );
-      // }
-
-      build.onLoad({ filter: /^react$/, namespace: NAMESPACE }, () => {
-        return {
-          contents: "module.exports = React",
-        };
-      });
-      build.onLoad({ filter: /^react-dom$/, namespace: NAMESPACE }, () => {
-        return {
-          contents: "module.exports = ReactDOM",
-        };
-      });
+      for (const { dep, content } of depList) {
+        build.onLoad(
+          { filter: new RegExp(`^${dep}$`), namespace: NAMESPACE },
+          () => {
+            return {
+              contents: content,
+            };
+          }
+        );
+      }
     },
   };
 };
-
-async function main() {}

@@ -1,6 +1,5 @@
 import { build, BuildOptions } from "esbuild";
-import chalk from "chalk";
-import consola from "consola";
+import { capitalCase } from "capital-case";
 import { PreserveExternalPlugin } from "./preserve-external-dep.plugin";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -32,6 +31,9 @@ window.ReactDOM = require('react-dom')`;
     ...sharedBuildOptions,
   });
 
+  const depContentFunc = (dep: string) =>
+    `module.exports = ${capitalCase(dep)}`;
+
   await build({
     entryPoints: ["./src/index.tsx"],
     outdir: "public",
@@ -40,7 +42,8 @@ window.ReactDOM = require('react-dom')`;
         depsToExtract: [
           {
             dep: "react",
-            content: "module.exports = React",
+            // in simple case, we can use content processor to handle result generation
+            contentFunc: depContentFunc,
           },
           {
             dep: "react-dom",
