@@ -235,7 +235,7 @@
       src: logo_default,
       className: "App-logo",
       alt: "logo"
-    }), /* @__PURE__ */ import_react.default.createElement("p", null, "Edit ", /* @__PURE__ */ import_react.default.createElement("code", null, "src/App.tsx"), " and save to reload."), /* @__PURE__ */ import_react.default.createElement("a", {
+    }), /* @__PURE__ */ import_react.default.createElement("p", null, "ESBuild powered React App"), /* @__PURE__ */ import_react.default.createElement("p", null, "Edit ", /* @__PURE__ */ import_react.default.createElement("code", null, "src/App.tsx"), " and save to reload."), /* @__PURE__ */ import_react.default.createElement("a", {
       className: "App-link",
       href: "https://reactjs.org",
       target: "_blank",
