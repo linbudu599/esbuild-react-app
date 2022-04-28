@@ -43,7 +43,7 @@
     "chalk": "^4.1.2",
     "consola": "^2.15.3",
     "esbuild": "^0.13.14",
-    "live-server": "^1.2.1",
+    "live-server": "^1.2.2",
     "serve": "^13.0.2",
     "ts-node": "^10.4.0"
   }
